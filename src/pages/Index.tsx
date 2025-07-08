@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -236,40 +236,182 @@ const Index = () => {
             </div>
           </div>
 
-          {/* Simplified Map */}
-          <div className="bg-gray-100 rounded-lg p-8 mb-8">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {Object.entries(REGIONS_DATA).map(([code, data]) => (
-                <Button
-                  key={code}
-                  variant={selectedRegion === code ? "default" : "outline"}
-                  className={`p-4 h-auto text-left ${selectedRegion === code ? "bg-green-600 hover:bg-green-700" : ""}`}
-                  onClick={() => handleRegionSelect(code)}
-                >
-                  <div>
-                    <div className="font-semibold text-sm">{data.name}</div>
-                    <div className="text-xs opacity-75 mt-1">
-                      {data.percent} субсидия
-                    </div>
-                  </div>
-                </Button>
-              ))}
+          {/* Interactive SVG Map */}
+          <div className="bg-gray-100 rounded-lg p-8 mb-8 relative">
+            <div className="w-full max-w-4xl mx-auto">
+              <svg
+                viewBox="0 0 800 500"
+                className="w-full h-auto border border-gray-300 rounded-lg bg-white shadow-sm"
+                style={{ minHeight: "300px" }}
+              >
+                {/* Moscow */}
+                <path
+                  data-region="77"
+                  d="M320 200 L340 190 L360 200 L350 220 L330 225 L320 200 Z"
+                  fill={selectedRegion === "77" ? "#22c55e" : "#e5e7eb"}
+                  stroke="#ffffff"
+                  strokeWidth="2"
+                  className="cursor-pointer hover:fill-green-400 transition-colors duration-200"
+                  onClick={() => handleRegionSelect("77")}
+                />
+
+                {/* Saint Petersburg */}
+                <path
+                  data-region="78"
+                  d="M300 150 L330 140 L335 160 L315 170 L300 150 Z"
+                  fill={selectedRegion === "78" ? "#22c55e" : "#e5e7eb"}
+                  stroke="#ffffff"
+                  strokeWidth="2"
+                  className="cursor-pointer hover:fill-green-400 transition-colors duration-200"
+                  onClick={() => handleRegionSelect("78")}
+                />
+
+                {/* Altai Krai */}
+                <path
+                  data-region="22"
+                  d="M500 280 L540 270 L550 300 L520 310 L500 280 Z"
+                  fill={selectedRegion === "22" ? "#22c55e" : "#e5e7eb"}
+                  stroke="#ffffff"
+                  strokeWidth="2"
+                  className="cursor-pointer hover:fill-green-400 transition-colors duration-200"
+                  onClick={() => handleRegionSelect("22")}
+                />
+
+                {/* Krasnodar Krai */}
+                <path
+                  data-region="23"
+                  d="M380 350 L420 345 L425 370 L385 375 L380 350 Z"
+                  fill={selectedRegion === "23" ? "#22c55e" : "#e5e7eb"}
+                  stroke="#ffffff"
+                  strokeWidth="2"
+                  className="cursor-pointer hover:fill-green-400 transition-colors duration-200"
+                  onClick={() => handleRegionSelect("23")}
+                />
+
+                {/* Tatarstan */}
+                <path
+                  data-region="16"
+                  d="M420 220 L450 210 L460 235 L435 245 L420 220 Z"
+                  fill={selectedRegion === "16" ? "#22c55e" : "#e5e7eb"}
+                  stroke="#ffffff"
+                  strokeWidth="2"
+                  className="cursor-pointer hover:fill-green-400 transition-colors duration-200"
+                  onClick={() => handleRegionSelect("16")}
+                />
+
+                {/* Belgorod Oblast */}
+                <path
+                  data-region="31"
+                  d="M370 240 L390 235 L395 255 L375 260 L370 240 Z"
+                  fill={selectedRegion === "31" ? "#22c55e" : "#e5e7eb"}
+                  stroke="#ffffff"
+                  strokeWidth="2"
+                  className="cursor-pointer hover:fill-green-400 transition-colors duration-200"
+                  onClick={() => handleRegionSelect("31")}
+                />
+
+                {/* Moscow Oblast */}
+                <path
+                  data-region="50"
+                  d="M300 210 L340 200 L350 230 L315 240 L300 210 Z"
+                  fill={selectedRegion === "50" ? "#22c55e" : "#e5e7eb"}
+                  stroke="#ffffff"
+                  strokeWidth="2"
+                  className="cursor-pointer hover:fill-green-400 transition-colors duration-200"
+                  onClick={() => handleRegionSelect("50")}
+                />
+
+                {/* Rostov Oblast */}
+                <path
+                  data-region="61"
+                  d="M400 280 L430 275 L435 300 L405 305 L400 280 Z"
+                  fill={selectedRegion === "61" ? "#22c55e" : "#e5e7eb"}
+                  stroke="#ffffff"
+                  strokeWidth="2"
+                  className="cursor-pointer hover:fill-green-400 transition-colors duration-200"
+                  onClick={() => handleRegionSelect("61")}
+                />
+
+                {/* Background map outline */}
+                <path
+                  d="M200 100 L600 100 L650 150 L700 200 L680 300 L650 400 L500 450 L300 430 L200 350 L180 250 L200 100 Z"
+                  fill="none"
+                  stroke="#94a3b8"
+                  strokeWidth="1"
+                  strokeDasharray="5,5"
+                  className="pointer-events-none"
+                />
+
+                {/* Region Labels */}
+                {selectedRegion && REGIONS_DATA[selectedRegion] && (
+                  <text
+                    x="400"
+                    y="480"
+                    textAnchor="middle"
+                    className="fill-gray-700 text-sm font-medium"
+                  >
+                    {REGIONS_DATA[selectedRegion].name}
+                  </text>
+                )}
+              </svg>
             </div>
+
+            {/* Popup */}
+            {selectedRegion && REGIONS_DATA[selectedRegion] && (
+              <div className="absolute top-4 right-4 bg-black/80 text-white px-4 py-2 rounded-lg shadow-lg animate-in fade-in-0 zoom-in-95 duration-200">
+                <h3 className="font-semibold text-lg">
+                  {REGIONS_DATA[selectedRegion].name}
+                </h3>
+                <p className="text-sm opacity-90">
+                  {REGIONS_DATA[selectedRegion].percent} субсидия
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Region Details */}
           {selectedRegion && REGIONS_DATA[selectedRegion] && (
-            <Card className="max-w-4xl mx-auto">
+            <Card className="max-w-4xl mx-auto animate-in fade-in-0 slide-in-from-bottom-4 duration-300">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Icon name="MapPin" className="h-5 w-5 text-green-600" />
                   {REGIONS_DATA[selectedRegion].name}
                 </CardTitle>
                 <CardDescription>
-                  {REGIONS_DATA[selectedRegion].support}
+                  В {REGIONS_DATA[selectedRegion].name} действуют субсидии на{" "}
+                  {REGIONS_DATA[selectedRegion].equipment.toLowerCase()}
                 </CardDescription>
               </CardHeader>
               <CardContent>
+                <div className="bg-gray-50 p-6 rounded-lg mb-6">
+                  <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                    <Icon name="Info" className="h-5 w-5 text-green-600" />
+                    Условия субсидий в регионе
+                  </h3>
+                  <ul className="space-y-2 text-gray-700">
+                    <li className="flex items-start gap-2">
+                      <span className="text-green-600 font-bold">•</span>
+                      <span>
+                        <strong>Поддерживаемая техника:</strong>{" "}
+                        {REGIONS_DATA[selectedRegion].equipment}
+                      </span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-green-600 font-bold">•</span>
+                      <span>
+                        <strong>Размер субсидии:</strong>{" "}
+                        {REGIONS_DATA[selectedRegion].support}
+                      </span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-green-600 font-bold">•</span>
+                      <span>
+                        <strong>Правовое основание:</strong>{" "}
+                        {REGIONS_DATA[selectedRegion].document}
+                      </span>
+                    </li>
+                  </ul>
+                </div>
                 <div className="grid md:grid-cols-3 gap-6">
                   <div>
                     <h3 className="font-semibold text-gray-900 mb-2">
